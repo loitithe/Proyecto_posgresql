@@ -70,6 +70,7 @@ public class App {
         }
     }
 
+    // METODOS DE POSTGRESQL
     private static void insertarPartido(Date fecha, int id_equipolocal, int id_equipovisitante) {
         String query = "INSERT INTO objetos.Partidos (fecha,equipo_local_id,equipo_visitante_id) VALUES(?,?,?)" ;
         try {
@@ -85,6 +86,45 @@ public class App {
 
     }
 
+    public static void insertarEquipo(String nombre, String ciudad, String nombre_entrenador, int edad) {
+
+        String query = "INSERT INTO objetos.Equipos(equipo_info) VALUES(Row(?, ?, ROW(?,?)))";
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1, nombre);
+            pStatement.setString(2, ciudad);
+            pStatement.setString(3, nombre_entrenador);
+            pStatement.setInt(4, edad);
+
+            int filasAfectadas = pStatement.executeUpdate();
+            System.out.println("filas afectadas  = " + filasAfectadas);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void insertarJugador(String nombre, int edad, int dorsal,String posicion,float altura,int equipo_id) {
+
+        String query = "INSERT INTO objetos.Jugadores (datos_personales,jugador_info,equipo_id) VALUES(" +
+                " ROW(?,?),ROW(?, ?, ?),?)" ;
+        try {
+            pStatement = connection.prepareStatement(query);
+            pStatement.setString(1, nombre);
+            pStatement.setInt(2, edad);
+            pStatement.setInt(3, dorsal);
+            pStatement.setString(4, posicion);
+            pStatement.setFloat(5, altura);
+            pStatement.setInt(6, equipo_id);
+
+            int filasAfectadas = pStatement.executeUpdate();
+            System.out.println("filas afectadas  = " + filasAfectadas);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    // METODOS INTRODUCCION DE DATOS
     private static Date pedirFecha(String mensaje) {
         LocalDate fecha = LocalDate.of(pedirInt("Introduce el año"),
                 pedirInt("Introduce numero de mes"), pedirInt("Introduce dia del mes"));
@@ -135,42 +175,5 @@ public class App {
 
 
         return entrada;
-    }
-    public static void insertarEquipo(String nombre, String ciudad, String nombre_entrenador, int edad) {
-
-        String query = "INSERT INTO objetos.Equipos(equipo_info) VALUES(Row(?, ?, ROW(?,?)))";
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setString(1, nombre);
-            pStatement.setString(2, ciudad);
-            pStatement.setString(3, nombre_entrenador);
-            pStatement.setInt(4, edad);
-
-            int filasAfectadas = pStatement.executeUpdate();
-            System.out.println("filas afectadas  = " + filasAfectadas);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-    public static void insertarJugador(String nombre, int edad, int dorsal,String posicion,float altura,int equipo_id) {
-
-        String query = "INSERT INTO objetos.Jugadores (datos_personales,jugador_info,equipo_id) VALUES(" +
-                " ROW(?,?),ROW(?, ?, ?),?)" ;
-        try {
-            pStatement = connection.prepareStatement(query);
-            pStatement.setString(1, nombre);
-            pStatement.setInt(2, edad);
-            pStatement.setInt(3, dorsal);
-            pStatement.setString(4, posicion);
-            pStatement.setFloat(5, altura);
-            pStatement.setInt(6, equipo_id);
-
-            int filasAfectadas = pStatement.executeUpdate();
-            System.out.println("filas afectadas  = " + filasAfectadas);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
     }
 }
