@@ -4,5 +4,7 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
         "/home/rguido/Downloads/postgresql-42.2.28.jre7.jar"
-    ]
+    ],
+    "docwriter.hotkey.mac": "⌘ + .",
+    "docwriter.language": "Spanish"
 }
