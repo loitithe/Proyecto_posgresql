@@ -3,7 +3,8 @@
     "java.project.outputPath": "bin",
     "java.project.referencedLibraries": [
         "lib/**/*.jar",
-        "/home/rguido/Downloads/postgresql-42.2.28.jre7.jar"
+        "/home/rguido/Downloads/postgresql-42.2.28.jre7.jar",
+        "c:\\Users\\a22rodrigodga\\Documents\\AD\\postgresql\\postgresql-42.2.27.jre7.jar"
     ],
     "docwriter.hotkey.mac": "⌘ + .",
     "docwriter.language": "Spanish"

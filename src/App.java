@@ -25,7 +25,27 @@ public class App {
     private static final DecimalFormat df = new DecimalFormat("0.00");
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static void main(String[] args) throws Exception {
+    public static void menuPrincipal() {
+        int option = -1;
+        do {
+            System.out.println("1.Menu modificacion de datos");
+            System.out.println("2.Menu consulta de datos\n0.Salir");
+            sc = new Scanner(System.in);
+            option = pedirInt("Elige una opcion ");
+            switch (option) {
+                case 1:
+                    menu1();
+                    break;
+                case 2:
+                    menu2();
+                default:
+                    break;
+            }
+        } while (option != 0);
+
+    }
+
+    public static void menu1() {
         String url = "jdbc:postgresql://localhost/futbol";
         String user = "postgres";
         String password = "abc123";
@@ -36,9 +56,9 @@ public class App {
             do {
                 System.out.println("1 # Insertar equipo #\n2-Insertar jugador\n3 $ Insertar partido $ ");
                 System.out.println("4 # Eliminar equipo #\n5-Eliminar jugador\n6 $ Eliminar partido $ ");
-                System.out.println("7 # Modificar equipo #\n8-Modificar jugador\n9 $ Modificar partido $");
+                System.out.println("7 # Modificar equipo #\n8-Modificar jugador\n9 $ Modificar partido $\n0.Salir");
                 option = sc.nextInt();
-                ;
+
                 switch (option) {
                     case 1:
                         insertarEquipo(pedirString("nombre equipo"), pedirString("ciudad equipo"),
@@ -88,9 +108,73 @@ public class App {
         }
     }
 
+    public static void menu2() {
+        String url = "jdbc:postgresql://localhost/futbol";
+        String user = "postgres";
+        String password = "abc123";
+        int option = -1;
+        try {
+            connection = DriverManager.getConnection(url, user, password);
+            sc = new Scanner(System.in);
+            do {
+                System.out.println("1. Listar toda la información de un Equipo buscándolo por id.\r\n" + //
+                        "2. Listar toda la información de todos los Equipos.\r\n" + //
+                        "3. Listar la información de un Jugador buscándolo por id.\r\n" + //
+                        "4. Listar la información de un Jugador buscándolo por nombre.\r\n" + //
+                        "5. Buscar partidos en los que un determinado equipo jugara como local.\r\n" + //
+                        "6. Buscar partidos en los que un determinado equipo jugara como visitante.\r\n" + //
+                        "7. Obtener toda la información de los jugadores que jueguen en una determinada posición.\n"
+                        +
+                        "8. Obtener toda la información de los jugadores según su dorsal.\r\n" + //
+                        "9. Obtener todos los partidos según la fecha.\n0. Salir");
+                option = sc.nextInt();
+
+                switch (option) {
+                    case 1:
+                        listarEquipoPorId(pedirInt("Introduce id del equipo "));
+                        break;
+                    case 2:
+                        listarTodosEquipos();
+                        break;
+                    case 3:
+                        listarJugadorPorId(pedirInt("Introduce id del jugador"));
+                        break;
+                    case 4:
+                        listarJugadorPorNombre(pedirString("Introduce el nombre del jugador"));
+                        break;
+                    case 5:
+                        buscarPartidosLocal(pedirInt("Introduce id del equipo a buscar"));
+                        break;
+                    case 6:
+                        buscarPartidosVisitante(pedirInt("Introduce el id del equipo a buscar"));
+                        break;
+                    case 7:
+                        obtenerJugadoresPorPosicion(pedirString("Introduce una posicion"));
+                        break;
+                    case 8:
+                        obtenerJugadoresPorDorsal(pedirInt("Introduce el dorsal de los jugadores a buscar"));
+                        break;
+                    case 9:
+                        obtenerPartidosPorFecha(pedirFecha("Introduce fecha para buscar el partido"));
+                        break;
+                    default:
+                        break;
+                }
+            } while (option != 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+
+        // menu1();
+        // menu2();
+        menuPrincipal();
+    }
+
     /**
      * * Crear los métodos que permitan:
-     *
      * insertar, eliminar y modificar un Equipo.
      * insertar, eliminar y modificar un Jugador.
      * insertar, eliminar y modificar un Partido.
@@ -247,53 +331,71 @@ public class App {
 
     // METODOS INTRODUCCION DE DATOS
     private static Date pedirFecha(String mensaje) {
-        LocalDate fecha = LocalDate.of(pedirInt("Introduce el año"),
-                pedirInt("Introduce numero de mes"), pedirInt("Introduce dia del mes"));
-        Date date = Date.valueOf(fecha);
-        return date;
+        Date date = null;
+        while (true) {
+            try {
+                LocalDate fecha = LocalDate.of(pedirInt("Introduce el año"),
+                        pedirInt("Introduce numero de mes"), pedirInt("Introduce dia del mes"));
+                date = Date.valueOf(fecha);
+                return date;
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+
+        }
+
     }
 
     private static Float pedirFloat(String mensaje) {
         float entrada = 0f;
-        System.out.println(mensaje);
-        try {
-            entrada = sc.nextFloat();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Debes introducir un float");
+        while (true) {
+            System.out.println(mensaje);
+            try {
+                entrada = sc.nextFloat();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Debes introducir un float");
+            }
+            sc.nextLine();
+            return entrada;
         }
-        sc.nextLine();
-        return entrada;
+
     }
 
     public static String pedirString(String mensaje) {
-        System.out.println(mensaje);
-        String entrada = "";
-        try {
-            entrada = sc.next();
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Debes introducir un string");
+        while (true) {
+            System.out.println(mensaje);
+            String entrada = "";
+            try {
+                entrada = sc.next();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Debes introducir un string");
 
+            }
+            sc.nextLine();
+
+            return entrada;
         }
-        sc.nextLine();
 
-        return entrada;
     }
 
     public static int pedirInt(String mensaje) {
         System.out.println(mensaje);
         int entrada = -1;
+        while (true) {
 
-        try {
-            entrada = sc.nextInt();
-        } catch (InputMismatchException e) {
-            // e.printStackTrace();
-            System.out.println("Debes introducir un integer");
-            sc.nextLine();
+            try {
+                entrada = sc.nextInt();
+            } catch (InputMismatchException e) {
+                // e.printStackTrace();
+                System.out.println("Debes introducir un integer");
+                sc.nextLine();
+            }
+
+            return entrada;
         }
-
-        return entrada;
     }
 
     /**
@@ -318,13 +420,7 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idEquipo);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-                System.out.println("Nombre: " + rs.getString("equipo_info.nombre"));
-                System.out.println("Ciudad: " + rs.getString("equipo_info.ciudad"));
-                System.out.println("Entrenador: " + rs.getString("equipo_info.entrenador_persona.nombre"));
-                System.out.println("Edad del entrenador: " + rs.getInt("equipo_info.entrenador_persona.edad"));
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -332,15 +428,18 @@ public class App {
 
     public static void listarTodosEquipos() {
         try {
-            String query = "SELECT * FROM objetos.Equipos";
+            String query = "SELECT equipo_id,(equipo_info).nombre AS nombre,(equipo_info).ciudad as ciudad,((equipo_info).entrenador_persona).nombre AS nombre_entrenador,((equipo_info).entrenador_persona).edad as edad FROM objetos.Equipos";
             statement = connection.createStatement();
             ResultSet rs = statement.executeQuery(query);
+            int numCols = rs.getMetaData().getColumnCount();
             while (rs.next()) {
                 System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-                System.out.println("Nombre: " + rs.getString("equipo_info.nombre"));
-                System.out.println("Ciudad: " + rs.getString("equipo_info.ciudad"));
-                System.out.println("Entrenador: " + rs.getString("equipo_info.entrenador_persona.nombre"));
-                System.out.println("Edad del entrenador: " + rs.getInt("equipo_info.entrenador_persona.edad"));
+                System.out.println("Nombre: " + rs.getString("nombre"));
+                System.out.println("Ciudad: " + rs.getString("ciudad"));
+                System.out.println("Entrenador: " +
+                        rs.getString("nombre_entrenador"));
+                System.out.println("Edad del entrenador: " +
+                        rs.getInt("edad"));
                 System.out.println("-----------------------------");
             }
         } catch (SQLException e) {
@@ -354,15 +453,8 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idJugador);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Jugador: " + rs.getInt("jugador_id"));
-                System.out.println("Nombre: " + rs.getString("datos_personales.nombre"));
-                System.out.println("Edad: " + rs.getInt("datos_personales.edad"));
-                System.out.println("Dorsal: " + rs.getInt("jugador_info.dorsal"));
-                System.out.println("Posición: " + rs.getString("jugador_info.posicion"));
-                System.out.println("Altura: " + rs.getFloat("jugador_info.altura"));
-                System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-            }
+
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -370,19 +462,11 @@ public class App {
 
     public static void listarJugadorPorNombre(String nombreJugador) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE datos_personales.nombre = ?";
+            String query = "SELECT * FROM objetos.Jugadores WHERE (datos_personales).nombre = ?";
             pStatement = connection.prepareStatement(query);
             pStatement.setString(1, nombreJugador);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Jugador: " + rs.getInt("jugador_id"));
-                System.out.println("Nombre: " + rs.getString("datos_personales.nombre"));
-                System.out.println("Edad: " + rs.getInt("datos_personales.edad"));
-                System.out.println("Dorsal: " + rs.getInt("jugador_info.dorsal"));
-                System.out.println("Posición: " + rs.getString("jugador_info.posicion"));
-                System.out.println("Altura: " + rs.getFloat("jugador_info.altura"));
-                System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -394,13 +478,7 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idEquipo);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Partido: " + rs.getInt("partido_id"));
-                System.out.println("Fecha: " + rs.getDate("fecha"));
-                System.out.println("Equipo Local ID: " + rs.getInt("equipo_local_id"));
-                System.out.println("Equipo Visitante ID: " + rs.getInt("equipo_visitante_id"));
-                System.out.println("-----------------------------");
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -412,13 +490,7 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idEquipo);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Partido: " + rs.getInt("partido_id"));
-                System.out.println("Fecha: " + rs.getDate("fecha"));
-                System.out.println("Equipo Local ID: " + rs.getInt("equipo_local_id"));
-                System.out.println("Equipo Visitante ID: " + rs.getInt("equipo_visitante_id"));
-                System.out.println("-----------------------------");
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -426,20 +498,11 @@ public class App {
 
     public static void obtenerJugadoresPorPosicion(String posicion) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE jugador_info.posicion = ?";
+            String query = "SELECT * FROM objetos.Jugadores WHERE (jugador_info).posicion = ?";
             pStatement = connection.prepareStatement(query);
             pStatement.setString(1, posicion);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Jugador: " + rs.getInt("jugador_id"));
-                System.out.println("Nombre: " + rs.getString("datos_personales.nombre"));
-                System.out.println("Edad: " + rs.getInt("datos_personales.edad"));
-                System.out.println("Dorsal: " + rs.getInt("jugador_info.dorsal"));
-                System.out.println("Posición: " + rs.getString("jugador_info.posicion"));
-                System.out.println("Altura: " + rs.getFloat("jugador_info.altura"));
-                System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-                System.out.println("-----------------------------");
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -451,16 +514,7 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, dorsal);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Jugador: " + rs.getInt("jugador_id"));
-                System.out.println("Nombre: " + rs.getString("datos_personales.nombre"));
-                System.out.println("Edad: " + rs.getInt("datos_personales.edad"));
-                System.out.println("Dorsal: " + rs.getInt("jugador_info.dorsal"));
-                System.out.println("Posición: " + rs.getString("jugador_info.posicion"));
-                System.out.println("Altura: " + rs.getFloat("jugador_info.altura"));
-                System.out.println("ID Equipo: " + rs.getInt("equipo_id"));
-                System.out.println("-----------------------------");
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -472,16 +526,29 @@ public class App {
             pStatement = connection.prepareStatement(query);
             pStatement.setDate(1, fecha);
             ResultSet rs = pStatement.executeQuery();
-            while (rs.next()) {
-                System.out.println("ID Partido: " + rs.getInt("partido_id"));
-                System.out.println("Fecha: " + rs.getDate("fecha"));
-                System.out.println("Equipo Local ID: " + rs.getInt("equipo_local_id"));
-                System.out.println("Equipo Visitante ID: " + rs.getInt("equipo_visitante_id"));
-                System.out.println("-----------------------------");
-            }
+            leerResultSet(rs);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void leerResultSet(ResultSet rs) {
+
+        int numCols;
+        try {
+            numCols = rs.getMetaData().getColumnCount();
+            while (rs.next()) {
+                for (int i = 1; i <= numCols; i++) {
+                    System.out.print(rs.getMetaData().getColumnName(i) + ": " + rs.getString(i) + "\n");
+
+                }
+                System.out.println("=======================================");
+            }
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
 }
