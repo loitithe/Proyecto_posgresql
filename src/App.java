@@ -416,11 +416,17 @@ public class App {
 
     public static void listarEquipoPorId(int idEquipo) {
         try {
-            String query = "SELECT * FROM objetos.Equipos WHERE equipo_id = ?";
-            pStatement = connection.prepareStatement(query);
-            pStatement.setInt(1, idEquipo);
-            ResultSet rs = pStatement.executeQuery();
-            leerResultSet(rs);
+            PreparedStatement statement = connection.prepareStatement("SELECT equipo_info.nombre, equipo_info.ciudad, equipo_info.entrenador_persona.nombre, equipo_info.entrenador_persona.edad FROM Equipos WHERE equipo_id = ?");
+            statement.setInt(1, idEquipo);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String nombre = resultSet.getString(1);
+                String ciudad = resultSet.getString(2);
+                String entrenadorNombre = resultSet.getString(3);
+                int entrenadorEdad = resultSet.getInt(4);
+
+                System.out.println("Nombre: " + nombre + ", Ciudad: " + ciudad + ", Entrenador: " + entrenadorNombre + ", Edad: " + entrenadorEdad);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -449,8 +455,8 @@ public class App {
 
     public static void listarJugadorPorId(int idJugador) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE jugador_id = ?";
-            pStatement = connection.prepareStatement(query);
+            pStatement = connection.prepareStatement("SELECT datos_personales.nombre, datos_personales.edad, jugador_info.dorsal, jugador_info.posicion, jugador_info.altura FROM Jugadores WHERE jugador_id = ?");
+           
             pStatement.setInt(1, idJugador);
             ResultSet rs = pStatement.executeQuery();
 
@@ -462,8 +468,7 @@ public class App {
 
     public static void listarJugadorPorNombre(String nombreJugador) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE (datos_personales).nombre = ?";
-            pStatement = connection.prepareStatement(query);
+            pStatement = connection.prepareStatement("SELECT datos_personales.nombre, datos_personales.edad, jugador_info.dorsal, jugador_info.posicion, jugador_info.altura FROM Jugadores WHERE datos_personales.nombre = ?");
             pStatement.setString(1, nombreJugador);
             ResultSet rs = pStatement.executeQuery();
             leerResultSet(rs);
@@ -475,6 +480,7 @@ public class App {
     public static void buscarPartidosLocal(int idEquipo) {
         try {
             String query = "SELECT * FROM objetos.Partidos WHERE equipo_local_id = ?";
+            
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, idEquipo);
             ResultSet rs = pStatement.executeQuery();
@@ -498,7 +504,7 @@ public class App {
 
     public static void obtenerJugadoresPorPosicion(String posicion) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE (jugador_info).posicion = ?";
+            String query = "SELECT datos_personales.nombre, datos_personales.edad, jugador_info.dorsal, jugador_info.posicion, jugador_info.altura FROM Jugadores WHERE jugador_info.posicion = ?";
             pStatement = connection.prepareStatement(query);
             pStatement.setString(1, posicion);
             ResultSet rs = pStatement.executeQuery();
@@ -510,7 +516,7 @@ public class App {
 
     public static void obtenerJugadoresPorDorsal(int dorsal) {
         try {
-            String query = "SELECT * FROM objetos.Jugadores WHERE jugador_info.dorsal = ?";
+            String query = "SELECT datos_personales.nombre, datos_personales.edad, jugador_info.dorsal, jugador_info.posicion, jugador_info.altura FROM Jugadores WHERE jugador_info.dorsal = ?";
             pStatement = connection.prepareStatement(query);
             pStatement.setInt(1, dorsal);
             ResultSet rs = pStatement.executeQuery();
